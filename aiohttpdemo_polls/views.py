@@ -16,11 +16,9 @@ async def index(request):
 @aiohttp_jinja2.template('detail.html')
 async def poll(request):
     async with request.app['db'].acquire() as conn:
-        # print(request.match_info)
         question_id = request.match_info['question_id']
         try:
             question, choices = await db.get_question(conn, question_id)
-            # print(question, choices)
         except db.RecordNotFound as e:
             raise web.HTTPNotFound(text=str(e))
         return {
@@ -33,12 +31,10 @@ async def poll(request):
 async def results(request):
     async with request.app['db'].acquire() as conn:
         question_id = request.match_info['question_id']
-
         try:
             question, choices = await db.get_question(conn, question_id)
         except db.RecordNotFound as e:
             raise web.HTTPNotFound(text=str(e))
-
         return {
             'question': question,
             'choices': choices
